@@ -1,0 +1,39 @@
+name: Build Lambda Function
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: amazonlinux:2
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      run: |
+        yum update -y
+        yum install -y python3 python3-pip zip
+        python3 --version
+
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install -r modules/pingdb/src/requirements.txt -t modules/pingdb/src/
+
+    - name: Create ZIP file
+      run: |
+        cd modules/pingdb/src
+        zip -r ../../../lambda_function.zip .
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: lambda_function
+        path: lambda_function.zip
