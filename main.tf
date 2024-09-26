@@ -74,3 +74,19 @@ output "db_instance_username" {
   value       = module.database.db_instance_username
   description = "The master username for the database"
 }
+
+module "pingdb_lambda" {
+  source      = "./modules/pingdb"
+  db_host     = split(":", module.database.db_instance_endpoint)[0]
+  db_name     = module.database.db_instance_name
+  db_user     = module.database.db_instance_username
+  secret_name = module.db_secret.secret_name
+  secret_arn  = module.db_secret.secret_arn
+  vpc_id      = module.networks.vpc_id
+  subnet_ids  = module.networks.subnet_ids
+}
+
+output "pingdb_lambda_arn" {
+  value       = module.pingdb_lambda.lambda_arn
+  description = "The ARN of the pingdb Lambda function"
+}
