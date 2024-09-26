@@ -1,5 +1,7 @@
 FROM public.ecr.aws/lambda/python:3.11
 
+RUN yum update -y && yum install -y postgresql-devel gcc
+
 # Copy requirements.txt
 COPY modules/pingdb/src/requirements.txt ${LAMBDA_TASK_ROOT}
 
