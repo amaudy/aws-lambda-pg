@@ -10,21 +10,27 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: public.ecr.aws/lambda/python:3.11
 
     steps:
     - uses: actions/checkout@v3
 
-    - name: Install dependencies
-      run: |
-        pip install --upgrade pip
-        pip install -r modules/pingdb/src/requirements.txt -t modules/pingdb/src/
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
 
-    - name: Create ZIP file
+    - name: Build Lambda package
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./Dockerfile
+        push: false
+        load: true
+        tags: lambda-builder:latest
+
+    - name: Copy Lambda package from Docker
       run: |
-        cd modules/pingdb/src
-        zip -r ../../../lambda_function.zip .
+        docker create --name lambda-container lambda-builder:latest
+        docker cp lambda-container:/lambda_function.zip .
+        docker rm lambda-container
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
