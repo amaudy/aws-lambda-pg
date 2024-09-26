@@ -29,12 +29,17 @@ module "db_secret" {
   db_password = var.db_password
 }
 
+module "database" {
+  source      = "./modules/database"
+  db_password = var.db_password
+  vpc_id      = module.networks.vpc_id
+  subnet_ids  = module.networks.subnet_ids
+}
+
 module "get_secret_lambda" {
   source      = "./modules/get-secret"
   secret_arn  = module.db_secret.secret_arn
   secret_name = "rds/postgresql/db_password"
-#   vpc_id      = module.networks.vpc_id
-#   subnet_ids  = module.networks.subnet_ids
 }
 
 # Output the AWS account ID
@@ -52,4 +57,20 @@ output "vpc_id" {
 output "subnet_ids" {
   value       = module.networks.subnet_ids
   description = "The IDs of the subnets in the default VPC"
+}
+
+# Output the database information
+output "db_instance_endpoint" {
+  value       = module.database.db_instance_endpoint
+  description = "The connection endpoint for the database"
+}
+
+output "db_instance_name" {
+  value       = module.database.db_instance_name
+  description = "The name of the database"
+}
+
+output "db_instance_username" {
+  value       = module.database.db_instance_username
+  description = "The master username for the database"
 }
