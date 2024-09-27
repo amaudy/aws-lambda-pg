@@ -6,7 +6,7 @@ RUN yum update -y && yum install -y postgresql-devel gcc zip
 COPY modules/pingdb/src/requirements.txt ${LAMBDA_TASK_ROOT}
 
 # Install the specified packages
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt -t modules/pingdb/src
 
 # Copy function code
 COPY modules/pingdb/src/ ${LAMBDA_TASK_ROOT}
