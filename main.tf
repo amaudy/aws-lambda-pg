@@ -30,10 +30,11 @@ module "db_secret" {
 }
 
 module "database" {
-  source      = "./modules/database"
-  db_password = var.db_password
-  vpc_id      = module.networks.vpc_id
-  subnet_ids  = module.networks.subnet_ids
+  source       = "./modules/database"
+  db_password  = var.db_password
+  vpc_id       = module.networks.vpc_id
+  subnet_ids   = module.networks.subnet_ids
+  lambda_sg_id = module.pingdb_lambda.lambda_sg_id
 }
 
 module "get_secret_lambda" {
