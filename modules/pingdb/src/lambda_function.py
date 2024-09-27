@@ -4,6 +4,7 @@ import json
 import boto3
 from botocore.exceptions import ClientError
 
+# Get the secret from AWS Secrets Manager
 def get_secret():
     secret_name = os.environ['SECRET_NAME']
     session = boto3.session.Session()
